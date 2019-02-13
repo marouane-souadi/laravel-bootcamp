@@ -1,13 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Requests\CreateUserRequest;
-use App\Role;
-use App\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Post;
+use App\Photo;
 
-class AdminUsersController extends Controller
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Http\Requests\CreatePostRequest;
+
+class AdminPostsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +21,10 @@ class AdminUsersController extends Controller
     public function index()
     {
         //
-      $users = User::all();
-      return view('admin.users.index', compact('users'));
+        $posts = Post::all();
+        return view('admin.posts.index', compact('posts'));
     }
+  
 
     /**
      * Show the form for creating a new resource.
@@ -29,8 +34,7 @@ class AdminUsersController extends Controller
     public function create()
     {
         //
-      $roles = Role::pluck('name','id')->all();
-      return view('admin.users.create', compact('roles'));
+        return view('admin.posts.create');
     }
 
     /**
@@ -39,10 +43,20 @@ class AdminUsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CreateUserRequest $request)
+    public function store(CreatePostRequest $request)
     {
         //
-      return $request->all();
+        $input = $request->all();
+        if ($file = $request->file('photo')) {
+            $name = time() . $file->getClientOriginalName();
+            $file->move('images', $name);
+            $photo = Photo::create(['path' => $name]);
+            $input['photo_id'] = $photo->id;
+        }
+        $user = Auth::user();
+        $user->posts()->create($input);
+        Session::flash('message', 'Post Created');
+        return redirect('/admin/posts');
     }
 
     /**

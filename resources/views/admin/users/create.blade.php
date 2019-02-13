@@ -1,36 +1,28 @@
 @extends('layouts.admin')
 
 @section('content')
-  <h3>Create User</h3>
-  @include('includes.form-errors')
-  {!! Form::open(['url'=>'admin/users', 'method'=>'post']) !!}
-  <div class="row">
-    <div class="six columns">
-      {!! Form::label('name', 'Name') !!}
-      {!! Form::text('name', null, ['class'=>'u-full-width']) !!}
-    </div>
-    <div class="six columns">
-      {!! Form::label('email', 'Email Address') !!}
-      {!! Form::text('email', null, ['class'=>'u-full-width']) !!}
-    </div>
-  </div>
-  {!! Form::label('password', 'Password') !!}
-  {!! Form::password('password') !!}
-  <div class="row">
-    <div class="four columns">
-      {!! Form::label('role', 'Role') !!}
-      {!! Form::select('role', $roles, null, ['placeholder'=>'Select a Role']) !!}
+<h3>Create User</h3>
+@include('includes.form-errors')
+{!! Form::open(['url'=>'admin/users', 'method'=>'post', 'files' => true]) !!}
+<div class="form-group">
+    {!! Form::label('name', 'Name') !!}
+    {!! Form::text('name', null, ['class'=>'form-control']) !!}
+    {!! Form::label('email', 'Email Address') !!}
+    {!! Form::email('email', null, ['class'=>'form-control']) !!}
 
-    </div>
-    <div class="four columns">
-      {!! Form::label('status', 'Status') !!}
-      {!! Form::select('status', ['0'=>'Not Active', '1'=>'Active'],'0') !!}
+    {!! Form::label('password', 'Password') !!}
+    {!! Form::password('password', ['class'=>'form-control']) !!}
+    {!! Form::label('role_id', 'Role') !!}
+    {!! Form::select('role_id', $roles, null, ['placeholder'=>'Select a Role', 'class'=>'custom-select']) !!}
 
-    </div>
-  </div>
-  <div>
-    {!! Form::submit('Create User', ['class'=>'button-primary']) !!}
-  </div>
-  {!! Form::close() !!}
+    {!! Form::label('is_active', 'Status') !!}
+    {!! Form::select('is_active', ['0'=>'Not Active', '1'=>'Active'],'0', ['class'=>'custom-select']) !!}
+</div>
+<div class="form-group">
+  <label for="photo">Choose profil photo file</label>
+    {!! Form::file('photo', ['class'=>'form-control-file']) !!}
+</div>
+{!! Form::submit('Create User', ['class'=>'btn btn-primary']) !!}
+{!! Form::close() !!}
 
 @endsection
